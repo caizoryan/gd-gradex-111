@@ -14,9 +14,6 @@ fetch(link, {
 			included[e.id] = e
 		})
 
-		console.log(included)
-
-
 		let cleaned = (res.data.map(x => {
 			let attr = x.attributes
 			let media = x.relationships.field_media_gallery.data
@@ -37,9 +34,6 @@ fetch(link, {
 			let videos = x.relationships.field_media_gallery
 			console.log(videos.data.filter(e => e.type == 'paragraph--video').map(e => included[e.id].attributes))
 
-
-			console.log(images)
-
 			let o = {}
 			o.projectTitle = attr.title
 			o.firstName = attr.field_first_name_preferred_names
@@ -54,22 +48,11 @@ fetch(link, {
 		populateGrid(cleaned)
 	})
 
-const sampleItems = [
-    {
-        thumbnail: "./images/gray-square.jpg",
-        artistName: "Hana Abdelrazik",
-        workName: "[insert-work-name]",
-        projectDescription: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        documentationLink: "https://example.com/projects/",
-    },
-];
-
 const GRID_ITEM_SELECTOR = ".grid-item";
 const THUMBNAIL_SELECTOR = ".grid-item-thumbnail";
 const FULL_CLIP_PATH = createFullSquareClipPath(24);
 
 const gridContainer = document.querySelector(".grid-container");
-const searchInput = document.querySelector("#archive-search");
 
 const randomClipPathByItemIndex = new Map();
 
@@ -115,12 +98,13 @@ function createFullSquareClipPath(points) {
     return `polygon(${coords.join(", ")})`;
 }
 
-function getRandomClipPathForItem(itemIndex) {
-    if (!isValidItemIndex(itemIndex)) return createCircularCutClipPath();
-    if (!randomClipPathByItemIndex.has(itemIndex)) {
-        randomClipPathByItemIndex.set(itemIndex, createCircularCutClipPath());
-    }
-    return randomClipPathByItemIndex.get(itemIndex);
+function createSkewedClipPath(){
+ return 'polygon( 0% 20%, 10% 80%, 90% 100%, 100% 0%)'
+}
+
+function getRandomClipPathForItem() {
+    // return createCircularCutClipPath();
+	return createSkewedClipPath()
 }
 
 function applyRandomCutShapes() {
@@ -138,14 +122,10 @@ function populateGrid(items) {
 	console.log(items)
     if (!gridContainer) return;
     gridContainer.innerHTML = items.map((item, sourceIndex) => `
-        <article class="grid-item" data-item-index="${sourceIndex}">
+        <article class="grid-item crop-box" data-item-index="${sourceIndex}">
             <img class="grid-item-thumbnail" src="${item.thumbnail}">
             <h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
             <p class="grid-item-work-name">${item.projectTitle}</p>
         </article>
     `).join("");
-
-    applyRandomCutShapes();
 }
-
-// populateGrid(sampleItems);
