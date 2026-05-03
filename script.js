@@ -1,3 +1,4 @@
+let main = 'https://2026.ocadu.gd/'
 let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image`
 fetch(link, {
 	Accept: 'application/json',
@@ -5,47 +6,54 @@ fetch(link, {
 	'Access-Control-Allow-Origin': '*'
 })
 	.then(res => res.json())
-	.then(res => console.log(res.data))
+	.then(res => {
+		console.log(res.data)
+		console.log(res)
+		let included = {}
+		res.included.forEach(e => {
+			included[e.id] = e
+		})
 
-/*
-    ----------------------------------------------------------------------------
-    APPLICATION OVERVIEW (main.js)
-    ----------------------------------------------------------------------------
-    This file owns the full client-side behavior for the prototype:
+		console.log(included)
 
-    1) DATA LAYER
-       - `sampleItems` is the source-of-truth list for all works shown in the
-         archive grid.
-       - Each object describes both the grid card and preview window content.
 
-    2) RENDER LAYER
-       - `populateGrid()` creates card markup and injects it into `.grid-container`.
-       - Grid cards are not hardcoded in HTML; they are generated from data.
+		let cleaned = (res.data.map(x => {
+			let attr = x.attributes
+			let media = x.relationships.field_media_gallery.data
 
-    3) VISUAL SHAPE SYSTEM
-       - `applyRandomCutShapes()` assigns each thumbnail a unique irregular
-         polygon through CSS custom properties.
-       - On hover, CSS transitions from random silhouette to full square.
+			let images = media.map(e => {
+				let imageObj = included[e.id].relationships
+				if (imageObj.field_p_image && imageObj.field_p_image.data) {
+					let img = included[imageObj.field_p_image.data.id]
+					let attr = img.attributes
+					let obj = {}
+					obj.url = main + attr.uri.url
 
-    4) WINDOWING SYSTEM
-       - Clicking a thumbnail spawns a floating preview window (`createPreviewWindow`).
-       - Multiple windows can exist simultaneously.
-       - Most recently created/interacted window is brought to front via z-index.
-       - Window header supports dragging (`setupPreviewWindowDragging`).
-       - Native CSS resize is enabled by stylesheet (`resize: both`).
-       - Clicking the close icon removes only that window.
-       - When a window is opened, the thumbnail remains expanded until the last window for that item is closed.
+					return obj
+				}
+				return undefined
+			}).filter(e => e!=undefined)
 
-    5) STARTUP
-       - Final line `populateGrid(sampleItems)` bootstraps the page.
-*/
+			let videos = x.relationships.field_media_gallery
+			console.log(videos.data.filter(e => e.type == 'paragraph--video').map(e => included[e.id].attributes))
 
-/*
-    ----------------------------------------------------------------------------
-    1) DATA SOURCE
-    ----------------------------------------------------------------------------
-*/
-// Source data for each tile in the object: sampleItems.
+
+			console.log(images)
+
+			let o = {}
+			o.projectTitle = attr.title
+			o.firstName = attr.field_first_name_preferred_names
+			o.lastName = attr.field_last_name
+			o.images = images
+			console.log(images)
+			if (images && images.length > 0) o.thumbnail = images[0].url
+
+			return o
+		}))
+
+		populateGrid(cleaned)
+	})
+
 const sampleItems = [
     {
         thumbnail: "./images/gray-square.jpg",
@@ -58,16 +66,12 @@ const sampleItems = [
 
 const GRID_ITEM_SELECTOR = ".grid-item";
 const THUMBNAIL_SELECTOR = ".grid-item-thumbnail";
-const PREVIEW_PADDING = 8;
 const FULL_CLIP_PATH = createFullSquareClipPath(24);
 
 const gridContainer = document.querySelector(".grid-container");
 const searchInput = document.querySelector("#archive-search");
 
-let highestPreviewWindowZIndex = 10;
-let previewWindowOpenCount = 0;
 const randomClipPathByItemIndex = new Map();
-const openPreviewCountByItemIndex = new Map();
 
 function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
@@ -119,15 +123,6 @@ function getRandomClipPathForItem(itemIndex) {
     return randomClipPathByItemIndex.get(itemIndex);
 }
 
-function setThumbnailExpandedState(itemIndex, shouldExpand) {
-    if (!isValidItemIndex(itemIndex)) return;
-    const thumbnail = document.querySelector(
-        `${GRID_ITEM_SELECTOR}[data-item-index="${itemIndex}"] ${THUMBNAIL_SELECTOR}`
-    );
-    if (!thumbnail) return;
-    thumbnail.classList.toggle("grid-item-thumbnail--pinned-open", shouldExpand);
-}
-
 function applyRandomCutShapes() {
     if (!gridContainer) return;
     gridContainer.querySelectorAll(GRID_ITEM_SELECTOR).forEach((gridItem) => {
@@ -140,41 +135,17 @@ function applyRandomCutShapes() {
 }
 
 function populateGrid(items) {
+	console.log(items)
     if (!gridContainer) return;
-    gridContainer.innerHTML = items.map(({ item, sourceIndex }) => `
+    gridContainer.innerHTML = items.map((item, sourceIndex) => `
         <article class="grid-item" data-item-index="${sourceIndex}">
-            <img class="grid-item-thumbnail" src="${item.thumbnail}" alt="${item.workName}">
-            <h3 class="grid-item-heading">${item.artistName}</h3>
-            <p class="grid-item-work-name">${item.workName}</p>
+            <img class="grid-item-thumbnail" src="${item.thumbnail}">
+            <h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
+            <p class="grid-item-work-name">${item.projectTitle}</p>
         </article>
     `).join("");
 
     applyRandomCutShapes();
-    openPreviewCountByItemIndex.forEach((count, sourceIndex) => {
-        setThumbnailExpandedState(sourceIndex, count > 0);
-    });
 }
 
-
-function getFilteredItems(query) {
-    const normalizedQuery = query.trim().toLowerCase();
-    return sampleItems
-        .map((item, sourceIndex) => ({ item, sourceIndex }))
-        .filter(({ item }) => {
-            if (!normalizedQuery) return true;
-            return (
-                item.artistName.toLowerCase().includes(normalizedQuery) ||
-                item.workName.toLowerCase().includes(normalizedQuery)
-            );
-        });
-}
-
-function setupSearchFilter() {
-    if (!searchInput) return;
-    searchInput.addEventListener("input", (event) => {
-        populateGrid(getFilteredItems(event.target.value || ""));
-    });
-}
-
-setupSearchFilter();
-populateGrid(getFilteredItems(""));
+// populateGrid(sampleItems);
