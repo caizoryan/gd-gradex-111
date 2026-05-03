@@ -40,45 +40,34 @@ body{
     max-width: var(--container-max);
 }
 
-.archive-panel{
-    width: 100%;
-    max-width: var(--panel-max);
-}
-
 .header-container{
-    margin-bottom: var(--header-margin-bottom);
+	padding-bottom: 1.4em;
+	font-size: 2em;
+	display: flex;
+	justify-content: space-between;
+	/* border-bottom: 1px dotted black; */
 }
 
-.header-actions{
-    width: 100%;
-    display: flex;
-    justify-content: var(--header-actions-justify);
-    margin-bottom: 1.125rem;
+.header-container ~ svg {
+	margin-bottom: 5.2em;
 }
 
-.archive-search-input{
-    width: var(--search-width);
-    border: 1px solid #1f1f1f;
-    padding: 0.55rem 0.75rem;
-    font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.02em;
-}
-
-.archive-search-input:focus{
-    outline: 2px solid #1f1f1f;
-    outline-offset: 1px;
-}
-
-.header-container h1{
-    font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-    font-weight: 400;
+h1, h2, h3, h4, h5, h6{
+    font-family: 'Plantin MT Pro', sans-serif;
+    font-weight: 300;
     margin: 0;
-    font-size: var(--header-size);
-    text-transform: uppercase;
+    /* font-size: var(--header-size); */
+    /* text-transform: uppercase; */
     line-height: var(--header-line-height);
     letter-spacing: 0.025em;
 }
+
+
+.header-container h4 {
+	/* font-weight: 600; */
+	font-size: 1em;
+}
+
 
 .content-container{
     width: 100%;
@@ -88,33 +77,19 @@ body{
     align-items: center;
     justify-content: flex-start;
     position: relative;
-    isolation: isolate;
-    padding-inline: var(--content-padding-inline);
-}
 
-.content-container::before{
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-color: #2f5d55;
-    background-image: url('./images/web-background-attempt-3.webp');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    z-index: -1;
-    pointer-events: none;
-}
-
-.archive-panel{
     margin-top: var(--archive-margin-top);
     background: #fff;
     padding: var(--archive-padding);
+
+    padding-inline: var(--content-padding-inline);
 }
 
 .grid-container{
-    display: grid;
-    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
-    gap: var(--grid-gap);
+	display: grid;
+	grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+	gap: var(--grid-gap);
+	grid-row-gap: 2.5em;
 }
 
 .grid-item{
@@ -143,10 +118,12 @@ body{
 }
 
 .grid-item-heading{
-    font-family: 'Plantin MT Pro', serif;
-    font-size: 1.25rem;
-    font-weight: 400;
-    margin-bottom: 0;
+	font-family: 'Neue Haas Grotesk Display Pro', serif;
+	font-size: 1rem;
+	font-weight: 500;
+	text-transform: uppercase;
+	line-height: 1.2em;
+	margin-bottom: 0;
 }
 
 .grid-item-work-name{
