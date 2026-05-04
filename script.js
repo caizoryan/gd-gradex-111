@@ -22,14 +22,20 @@ fetch(link, {
 				let imageObj = included[e.id].relationships
 				if (imageObj.field_p_image && imageObj.field_p_image.data) {
 					let img = included[imageObj.field_p_image.data.id]
+					let meta = imageObj.field_p_image.data.meta
 					let attr = img.attributes
 					let obj = {}
 					obj.url = main + attr.uri.url
+					obj.alt = meta.alt
+					obj.width = meta.width
+					obj.height = meta.height
 
 					return obj
 				}
 				return undefined
 			}).filter(e => e!=undefined)
+
+			console.log(images)
 
 			let videos = x.relationships.field_media_gallery
 			console.log(videos.data.filter(e => e.type == 'paragraph--video').map(e => included[e.id].attributes))
@@ -40,7 +46,7 @@ fetch(link, {
 			o.lastName = attr.field_last_name
 			o.images = images
 			console.log(images)
-			if (images && images.length > 0) o.thumbnail = images[0].url
+			if (images && images.length > 0) o.thumbnail = images[0]
 
 			return o
 		}))
@@ -51,6 +57,7 @@ fetch(link, {
 		// initialize with element
 		var pckry = new Packery( grid, {
 			// options...
+			gutter: 40,
 			itemSelector: '.grid-item'
 		});
 	})
@@ -130,13 +137,21 @@ function applyRandomCutShapes() {
 
 function populateGrid(items) {
 	if (!gridContainer) return;
-	gridContainer.innerHTML = items.map((item, sourceIndex) => `
-			<article class="grid-item crop-box" data-item-index="${sourceIndex}">
-					<img class="grid-item-thumbnail" src="${item.thumbnail}">
-					<h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
-					<p class="grid-item-work-name">${item.projectTitle}</p>
-			</article>
-	`).join("");
+	gridContainer.innerHTML = items.map((item, sourceIndex) => {
 
-	applyRandomCutShapes()
+		let w = 300 + Math.random() * 80
+		console.log(item.thumbnail)
+		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
+		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
+
+		return `
+			<article  class="grid-item crop-box" data-item-index="${sourceIndex}">
+					<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
+					 <h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
+					 <p class="grid-item-work-name">${item.projectTitle}</p>
+			</article>
+	`}).join("");
+
+
+	// applyRandomCutShapes()
 }

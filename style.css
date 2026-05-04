@@ -86,13 +86,16 @@ h1, h2, h3, h4, h5, h6{
 }
 
 .grid-container{
-	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-	gap: 1.5em;
-	grid-row-gap: 2.5em;
+	/* display: grid; */
+	/* grid-template-columns: repeat(4, minmax(0, 1fr)); */
+	/* gap: 1.5em; */
+	/* grid-row-gap: 2.5em; */
 }
 
 .grid-item{
+		/* width: 300px; */
+	width: min-content;
+	height: min-content;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -100,23 +103,18 @@ h1, h2, h3, h4, h5, h6{
 }
 
 .grid-item-thumbnail{
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: contain;
+    /* width: 100%; */
+    /* aspect-ratio: 1 / 1; */
+    /* object-fit: contain; */
     border-radius: 0;
     margin-bottom: 0.5rem;
     /* clip-path: var(--clip-random); */
-	border-radius: var(--clip-random);
+		/* border-radius: var(--clip-random); */
     /* -webkit-clip-path: var(--clip-random); */
     transition: clip-path 260ms ease, -webkit-clip-path 260ms ease;
     cursor: pointer;
 }
 
-.grid-item:hover .grid-item-thumbnail,
-.grid-item-thumbnail.grid-item-thumbnail--pinned-open{
-    clip-path: var(--clip-full);
-    -webkit-clip-path: var(--clip-full);
-}
 
 .grid-item-heading{
 	font-family: 'Neue Haas Grotesk Display Pro', serif;
