@@ -30,8 +30,14 @@ html{
 }
 
 body{
-    font-family: 'Plantin MT Pro', sans-serif;
-    padding: 0;
+	font-family: 'Plantin MT Pro', sans-serif;
+	padding: 0;
+
+		background: #fff2;
+		/* overflow-y: hidden; */
+		/* overflow-x: hidden; */
+		/* background-size: 50px 50px; */
+		/* background-image: linear-gradient(to right, #eee 1px, transparent 1px), linear-gradient(to bottom, #eee 1px, transparent 1px); */
 }
 
 .header-container,
@@ -56,8 +62,6 @@ h1, h2, h3, h4, h5, h6{
     font-family: 'Plantin MT Pro', sans-serif;
     font-weight: 300;
     margin: 0;
-    /* font-size: var(--header-size); */
-    /* text-transform: uppercase; */
     line-height: var(--header-line-height);
     letter-spacing: 0.025em;
 }
@@ -78,43 +82,54 @@ h1, h2, h3, h4, h5, h6{
     justify-content: flex-start;
     position: relative;
 
+
     margin-top: var(--archive-margin-top);
-    background: #fff;
     padding: var(--archive-padding);
 
     padding-inline: var(--content-padding-inline);
 }
 
-.grid-container{
-	/* display: grid; */
-	/* grid-template-columns: repeat(4, minmax(0, 1fr)); */
-	/* gap: 1.5em; */
-	/* grid-row-gap: 2.5em; */
-}
 
 .grid-item{
 		/* width: 300px; */
 	width: min-content;
 	height: min-content;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-bottom: 1rem;
+	mix-blend-mode: multiply;
 }
 
 .grid-item-thumbnail{
-    /* width: 100%; */
-    /* aspect-ratio: 1 / 1; */
-    /* object-fit: contain; */
     border-radius: 0;
     margin-bottom: 0.5rem;
-    /* clip-path: var(--clip-random); */
-		/* border-radius: var(--clip-random); */
-    /* -webkit-clip-path: var(--clip-random); */
-    transition: clip-path 260ms ease, -webkit-clip-path 260ms ease;
+    clip-path: var(--clip-random);
+		border-radius: var(--border-random);
+    transition: all 260ms ease;
     cursor: pointer;
 }
 
+.grid-item-thumbnail:hover{
+	border-radius: 0;
+}
+
+article {
+	filter: grayscale(1);
+}
+
+article {
+	transform: rotate(var(--angle-random));
+}
+
+/* article h3, */
+/* article p */
+/* { */
+/* 	opacity: .8; */
+/* } */
+article:hover {
+	filter: grayscale(0);
+}
 
 .grid-item-heading{
 	font-family: 'Neue Haas Grotesk Display Pro', serif;

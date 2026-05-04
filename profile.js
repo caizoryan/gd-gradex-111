@@ -14,11 +14,11 @@
 // Maybe we don’t have a search bar since all students will be right there on the front page
 // We could use tag filtering though (tags,. Class,
 // ------------------
-// 
-// ------------------
 
 let main = 'https://2026.ocadu.gd/'
 let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image,field_thumbnail_image`
+let person = window.location.hash
+
 fetch(link, {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
@@ -26,14 +26,15 @@ fetch(link, {
 })
 	.then(res => res.json())
 	.then(res => {
-		console.log(res.data)
-		console.log(res)
+		// console.log(res.data)
+		// console.log(res)
 		let included = {}
 		res.included.forEach(e => {
 			included[e.id] = e
 		})
 
 		let cleaned = (res.data.map(x => {
+			console.log(x.id)
 			let attr = x.attributes
 			let media = x.relationships.field_media_gallery.data
 			let thumbnail = x.relationships.field_thumbnail_image?.data
@@ -69,10 +70,12 @@ fetch(link, {
 			// console.log(images)
 
 			let videos = x.relationships.field_media_gallery
-			console.log(videos.data.filter(e => e.type == 'paragraph--video').map(e => included[e.id].attributes))
+			// console.log(videos.data.filter(e => e.type == 'paragraph--video').map(e => included[e.id].attributes))
 
 			let o = {}
+
 			o.projectTitle = attr.title
+			o.description = attr.field_project_description.value
 			o.firstName = attr.field_first_name_preferred_names
 			o.lastName = attr.field_last_name
 			o.images = images
@@ -84,16 +87,7 @@ fetch(link, {
 			return o
 		}))
 
-		cleaned = cleaned
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
-			.sort(() => Math.random() > .5 ? 1 : -1 )
+		cleaned = cleaned.find(e => e.id == person.slice(1))
 
 		populateGrid(cleaned)
 
@@ -101,7 +95,7 @@ fetch(link, {
 		// initialize with element
 		var pckry = new Packery( grid, {
 			// options...
-			gutter: 14,
+			gutter: 40,
 			itemSelector: '.grid-item'
 		});
 	})
@@ -193,38 +187,28 @@ function applyRandomCutShapes() {
 	gridContainer.querySelectorAll(GRID_ITEM_SELECTOR).forEach((gridItem) => {
 		const thumbnail = gridItem.querySelector(THUMBNAIL_SELECTOR);
 		if (!thumbnail) return;
-
-		console.log(thumbnail)
-
-		thumbnail.style.setProperty("transform", 'rotate('+Math.random() * 5 - 2.5 +"deg)");
-
 		let rand = radiuses[Math.floor(Math.random()*radiuses.length)]
 		if(strategy == 'kiki') thumbnail.style.setProperty("--clip-random", getRandomClipPathForItem());
 		else if (strategy == 'bouba')  thumbnail.style.setProperty("--border-random", rand);
 	});
 }
 
-function populateGrid(items) {
+function populateGrid(profile) {
+	console.log(profile)
 	if (!gridContainer) return;
-	gridContainer.innerHTML = items.map((item, sourceIndex) => {
+	gridContainer.innerHTML = `<div class="grid-item" style='width:350px'> ${profile.description} </div>`
+			+
+		profile.images.map((item, sourceIndex) => {
+			let min = 350
+			let w = min + Math.random() * 70
+			let ratio = w/(item.width ? item.width : w)
+			let height = ratio * (item?.height ? item.height : w)
 
-		let min = 250
-		let w = min + Math.random() * 70
-		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
-		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
-
-		if (item.projectTitle == 'Cura Prototype') return ''
-
-		return `
-<a href='./profile.html#${item.id}'>
-			<article  class="grid-item crop-box" data-item-index="${sourceIndex}">
-					<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
-					 <h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
-					 <p class="grid-item-work-name">${item.projectTitle}</p>
-			</article>
-</a>
-	`}).join("");
+			return  `<article  class="grid-item crop-box" data-item-index="${sourceIndex}">
+						<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.url ? item.url : './images/gray-square.jpg'}">
+				</article>
+		`}).join("");
 
 
-	applyRandomCutShapes()
+	// applyRandomCutShapes()
 }
