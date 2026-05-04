@@ -46,6 +46,13 @@ fetch(link, {
 		}))
 
 		populateGrid(cleaned)
+
+		var grid = document.querySelector('.grid-container');
+		// initialize with element
+		var pckry = new Packery( grid, {
+			// options...
+			itemSelector: '.grid-item'
+		});
 	})
 
 const GRID_ITEM_SELECTOR = ".grid-item";
@@ -99,13 +106,16 @@ function createFullSquareClipPath(points) {
 }
 
 function createSkewedClipPath(){
- return 'polygon( 0% 20%, 10% 80%, 90% 100%, 100% 0%)'
+	return '60% 40% 55% 45% / 55% 60% 40% 45%';
+// }
+ // return 'polygon( 0% 20%, 10% 80%, 90% 100%, 100% 0%)'
 }
 
 function getRandomClipPathForItem() {
     // return createCircularCutClipPath();
 	return createSkewedClipPath()
 }
+
 
 function applyRandomCutShapes() {
     if (!gridContainer) return;
@@ -119,13 +129,14 @@ function applyRandomCutShapes() {
 }
 
 function populateGrid(items) {
-	console.log(items)
-    if (!gridContainer) return;
-    gridContainer.innerHTML = items.map((item, sourceIndex) => `
-        <article class="grid-item crop-box" data-item-index="${sourceIndex}">
-            <img class="grid-item-thumbnail" src="${item.thumbnail}">
-            <h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
-            <p class="grid-item-work-name">${item.projectTitle}</p>
-        </article>
-    `).join("");
+	if (!gridContainer) return;
+	gridContainer.innerHTML = items.map((item, sourceIndex) => `
+			<article class="grid-item crop-box" data-item-index="${sourceIndex}">
+					<img class="grid-item-thumbnail" src="${item.thumbnail}">
+					<h3 class="grid-item-heading">${item.firstName + ' ' + item.lastName}</h3>
+					<p class="grid-item-work-name">${item.projectTitle}</p>
+			</article>
+	`).join("");
+
+	applyRandomCutShapes()
 }
