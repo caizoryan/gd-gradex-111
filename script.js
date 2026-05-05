@@ -104,6 +104,7 @@ function random(min, max) {
 }
 
 let curIndex = 1
+let activeProfileId = null
 
 let pckryDestroyTimeout
 let resizeTimeout
@@ -149,6 +150,9 @@ function initPackery() {
 }
 
 function openProfile(id) {
+	if (activeProfileId === id && document.body.classList.contains('profile-open')) return
+	activeProfileId = id
+
 	document.body.classList.add('profile-open')
 	let el = document.querySelector(`*[data-id='${id}']`)
 	document.querySelectorAll("*[data-id]").forEach(e => {
@@ -168,6 +172,7 @@ function openProfile(id) {
 
 	projectMedia.style.display = 'block'
 	projectMetadata.style.display = 'block'
+	projectMedia.innerHTML = ''
 	appendProjectImages(id)
 }
 
@@ -232,6 +237,7 @@ function applyRandomAngles() {
 
 function reset(){
 	document.body.classList.remove('profile-open')
+	activeProfileId = null
 	if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
 	initHomePage(cleaned)
 
