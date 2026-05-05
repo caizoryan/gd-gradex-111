@@ -48,11 +48,18 @@ h1, h2, h3, h4, h5, h6{
     letter-spacing: 0.025em;
 }
 
-.header-container h4 {
+.header-container h4,
+.header-container h5 {
 	font-size: 1em;
-	color: #666;
-	font-family: 'Plantin MT Pro', sans-serif;
-	text-transform: lowercase;
+  color: black;
+  font-family: sans-serif;
+  text-transform: uppercase;
+	line-height: 1.1em;
+	margin-right: .8em;
+}
+
+.header-container h5 {
+	font-size: .8em;
 }
 
 .header-container h1 {
@@ -128,7 +135,6 @@ p {
 }
 
 @keyframes fall {
-
  from {
 		transform: translateY(0px) rotate(var(--angle-random));
 		-webkit-animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0.33);
@@ -338,7 +344,8 @@ article:hover {
 		gap: 0.25rem;
 		min-height: 0;
 		height: auto;
-		margin-bottom: 0.5rem;
+		margin-top: 2rem;
+		margin-bottom: 4rem;
 	}
 
 	.header-container h1{
