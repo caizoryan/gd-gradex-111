@@ -5,6 +5,10 @@ let main = 'https://2026.ocadu.gd/'
 let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image,field_thumbnail_image`
 let pckry
 
+let included  = {}
+let data
+let cleaned 
+
 fetch(link, {
 	Accept: 'application/json',
 	'Content-Type': 'application/json',
@@ -14,12 +18,12 @@ fetch(link, {
 	.then(res => {
 		console.log(res.data)
 		console.log(res)
-		let included = {}
+		data = res.data
 		res.included.forEach(e => {
 			included[e.id] = e
 		})
 
-		let cleaned = (res.data.map(x => {
+		cleaned = (res.data.map(x => {
 			let attr = x.attributes
 			let media = x.relationships.field_media_gallery.data
 			let thumbnail = x.relationships.field_thumbnail_image?.data
@@ -81,7 +85,7 @@ fetch(link, {
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 
-		populateGrid(cleaned)
+		initHomePage(cleaned)
 
 		 let grid = document.querySelector('.grid-container');
 		// initialize with element
@@ -111,6 +115,25 @@ function openProfile(id, el) {
 			pckry.layout()
 		}
 	})
+
+	document.querySelector('.project-media').style.display = 'block'
+	appendProjectImages(id)
+}
+
+function appendProjectImages(id){
+	let project = cleaned.find(e => e.id == id)
+	project.images.forEach(item => {
+		let img = document.createElement("img")
+		img.src = item.url
+		img.classList.add('project-img')
+		img.style.opacity = 0
+		document.querySelector('.project-media').appendChild(img)
+		setTimeout(() => {
+			img.style.opacity=1
+		}, random(500, 1500))
+	})
+	// console.log(project.ima)
+
 }
 
 function applyRandomAngles() {
@@ -128,10 +151,23 @@ function applyRandomAngles() {
 	})
 }
 
-function populateGrid(items) {
+function reset(){
+	initHomePage(cleaned)
+	let projectMedia = document.querySelector('.project-media')
+	projectMedia.style.display = 'none'
+	projectMedia.innerHTML = ''
+	pckry ? pckry.destroy() : null
+	 let grid = document.querySelector('.grid-container');
+	pckry = new Packery(grid, {
+		// options...
+		gutter: -30,
+		itemSelector: '.grid-item'
+	});
+}
+
+function initHomePage(items) {
 	if (!gridContainer) return;
 	gridContainer.innerHTML = items.map((item) => {
-
 		let w = random(200, 350)
 		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
 		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
@@ -139,11 +175,11 @@ function populateGrid(items) {
 		if (item.projectTitle == 'Cura Prototype') return ''
 
 		return `
-				<article  class="grid-item crop-box" data-id="${item.id}">
-					<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
-					<p class="grid-item-work-name">${item.projectTitle}</p>
-					<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
-				</article>
+			<article  class="grid-item crop-box" data-id="${item.id}">
+				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
+				<p class="grid-item-work-name">${item.projectTitle}</p>
+				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
+			</article>
 `}).join("");
 
 	applyRandomAngles()

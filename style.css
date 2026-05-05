@@ -12,7 +12,6 @@
     --header-line-height: 3.5rem;
     --header-actions-justify: flex-end;
     --search-width: min(100%, 22rem);
-    --archive-margin-top: 3rem;
     --archive-padding: clamp(1.25rem, 2vw, 2rem);
     --grid-columns: 6;
     --grid-gap: 1rem;
@@ -48,11 +47,10 @@ body{
 }
 
 .header-container{
-	padding-bottom: 1.4em;
 	font-size: 2em;
 	display: flex;
+	height: 200px;
 	justify-content: space-between;
-	margin-bottom: 3.2em;
 	/* border-bottom: 1px dotted black; */
 }
 
@@ -83,13 +81,29 @@ h1, h2, h3, h4, h5, h6{
 }
 
 .fall-down {
-	-webkit-animation: fall 2.5s ;
-	-moz-animation: fall 2.5s ;
-	-o-animation: fall 2.5s ;
-	animation: fall 2.5s ;
+	-webkit-animation: fall 1.5s ;
+	-moz-animation: fall 1.5s ;
+	-o-animation: fall 1.5s ;
+	animation: fall 1.5s ;
 }
 
-.project-media{}
+.project-media{
+	position: fixed;
+  width: 60vw;
+  height: 100vh;
+  right: 0;
+  top: 0px;
+  display: none;
+  overflow-y: scroll;
+  padding: 1em;
+  padding-top: 200px;
+}
+
+.project-img {
+	width: 100%;
+	height: auto;
+	transition: all 870ms;
+}
 
 @keyframes fall {
 
@@ -105,20 +119,15 @@ h1, h2, h3, h4, h5, h6{
 
 
 .content-container{
-    width: 100%;
-    min-height: 100vh;
+	width: 100%;
+	min-height: 100vh;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    position: relative;
-
-
-    margin-top: var(--archive-margin-top);
-    padding: var(--archive-padding);
-    padding-inline: var(--content-padding-inline);
-	padding: 2em 8em;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	position: relative;
+	padding: 5.5em 8em;
 }
 
 
