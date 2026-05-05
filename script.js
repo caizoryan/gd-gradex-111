@@ -9,7 +9,6 @@ let projectMedia = document.querySelector('.project-media')
 let projectMetadata = document.querySelector('.project-metadata')
 
 let included  = {}
-let data
 let cleaned 
 
 fetch(link, {
