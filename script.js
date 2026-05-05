@@ -5,6 +5,9 @@ let main = 'https://2026.ocadu.gd/'
 let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image,field_thumbnail_image`
 let pckry
 
+let projectMedia = document.querySelector('.project-media')
+let projectMetadata = document.querySelector('.project-metadata')
+
 let included  = {}
 let data
 let cleaned 
@@ -65,6 +68,9 @@ fetch(link, {
 			o.projectTitle = attr.title
 			o.firstName = attr.field_first_name_preferred_names
 			o.lastName = attr.field_last_name
+			console.log(attr)
+			o.description = attr.field_project_description.value
+			o.bio = attr.field_short_biography?.value
 			o.images = images
 			o.thumbnail = thumbnail
 			o.id = x.id
@@ -104,43 +110,72 @@ function random(min, max) {
 
 let curIndex = 1
 
-function openProfile(id, el) {
-	console.log("Destrying")
-	// pckry.destroy()
+let pckryDestroyTimeout
+
+function openProfile(id) {
+	let el = document.querySelector(`*[data-id='${id}']`)
 	document.querySelectorAll("*[data-id]").forEach(e => {
 		if (e != el) e.classList.add('fall-down')
-		e.onanimationend = (event) => { 
+		e.onanimationend = () => { 
 			e.remove()
 			window.scrollTo({behavior: 'smooth', top: 0, left: 0})
-			pckry.layout()
+			el.classList.add('fall-down')
+			el.onanimationend = () => el.remove()
+
+			if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
+			pckryDestroyTimeout = setTimeout(() => {
+				pckry.destroy()
+			}, 1500)
 		}
 	})
 
-	document.querySelector('.project-media').style.display = 'block'
+	projectMedia.style.display = 'block'
+	projectMetadata.style.display = 'block'
 	appendProjectImages(id)
 }
 
 function appendProjectImages(id){
 	let project = cleaned.find(e => e.id == id)
+
 	project.images.forEach(item => {
 		let img = document.createElement("img")
 		img.src = item.url
 		img.classList.add('project-img')
 		img.style.opacity = 0
-		document.querySelector('.project-media').appendChild(img)
+		projectMedia.appendChild(img)
 		setTimeout(() => {
 			img.style.opacity=1
 		}, random(500, 1500))
 	})
+
+	projectMetadata.innerHTML = `
+<div class='project-data'>
+	<h4>${project.projectTitle}</h4>
+	<p class='project-description'>
+			${project.description}
+	</p>
+</div>
+
+<div class='designer-data'>
+	<h4>${project.firstName} ${project.lastName}</h4>
+	<p class='project-description'>
+			${project.bio}
+	</p>
+</div>
+`
+
+
+	setTimeout(() => {
+		projectMetadata.style.opacity=1
+	}, random(5, 15))
+
 	// console.log(project.ima)
 
 }
 
 function applyRandomAngles() {
 	document.querySelectorAll("*[data-id]").forEach(e => {
-		console.log("WORKED!",e.getAttribute("data-id"))
 		e.onclick = () => {
-			console.log('CLICKED', e)
 			openProfile(e.getAttribute('data-id'), e)
 		}
 	})
@@ -152,10 +187,16 @@ function applyRandomAngles() {
 }
 
 function reset(){
+	if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
 	initHomePage(cleaned)
-	let projectMedia = document.querySelector('.project-media')
+
 	projectMedia.style.display = 'none'
+	projectMetadata.style.display = 'none'
+	projectMetadata.style.opacity = 0
+
 	projectMedia.innerHTML = ''
+	projectMetadata.innerHTML = ''
+
 	pckry ? pckry.destroy() : null
 	 let grid = document.querySelector('.grid-container');
 	pckry = new Packery(grid, {
@@ -177,11 +218,13 @@ function initHomePage(items) {
 		console.log(imageStyleUrl(item.thumbnail.url, 'thumbnail'));
 
 		return `
+<a href='#${item.id}'>
 			<article  class="grid-item crop-box" data-id="${item.id}">
 				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
 				<p class="grid-item-work-name">${item.projectTitle}</p>
 				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : './images/gray-square.jpg'}">
 			</article>
+</a>
 `}).join("");
 
 	applyRandomAngles()
@@ -193,4 +236,11 @@ function imageStyleUrl(originalUrl, style) {
   const path = url.pathname.replace('/web/sites/default/files', '');
 
   return `${url.origin}/web/sites/default/files/styles/${style}/public${path}`;
+}
+
+window.onhashchange = e => {
+	let hash = window.location.hash
+	console.log(hash.slice(1))
+	if (hash.slice(1) == ''){reset()}
+	else if (cleaned.find(e => e.id == hash.slice(1))) openProfile(hash.slice(1))
 }
