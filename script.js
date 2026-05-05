@@ -174,13 +174,23 @@ function initHomePage(items) {
 
 		if (item.projectTitle == 'Cura Prototype') return ''
 
+		console.log(imageStyleUrl(item.thumbnail.url, 'thumbnail'));
+
 		return `
 			<article  class="grid-item crop-box" data-id="${item.id}">
 				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
 				<p class="grid-item-work-name">${item.projectTitle}</p>
-				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
+				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : './images/gray-square.jpg'}">
 			</article>
 `}).join("");
 
 	applyRandomAngles()
+}
+
+
+function imageStyleUrl(originalUrl, style) {
+  const url = new URL(originalUrl, window.location.origin);
+  const path = url.pathname.replace('/web/sites/default/files', '');
+
+  return `${url.origin}/web/sites/default/files/styles/${style}/public${path}`;
 }
