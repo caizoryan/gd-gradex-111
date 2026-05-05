@@ -112,7 +112,8 @@ let curIndex = 1
 
 let pckryDestroyTimeout
 
-function openProfile(id, el) {
+function openProfile(id) {
+	let el = document.querySelector(`*[data-id='${id}']`)
 	document.querySelectorAll("*[data-id]").forEach(e => {
 		if (e != el) e.classList.add('fall-down')
 		e.onanimationend = () => { 
@@ -215,12 +216,21 @@ function initHomePage(items) {
 		if (item.projectTitle == 'Cura Prototype') return ''
 
 		return `
+<a href='#${item.id}'>
 			<article  class="grid-item crop-box" data-id="${item.id}">
 				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
 				<p class="grid-item-work-name">${item.projectTitle}</p>
 				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
 			</article>
+</a>
 `}).join("");
 
 	applyRandomAngles()
+}
+
+window.onhashchange = e => {
+	let hash = window.location.hash
+	console.log(hash.slice(1))
+	if (hash.slice(1) == ''){reset()}
+	else if (cleaned.find(e => e.id == hash.slice(1))) openProfile(hash.slice(1))
 }
