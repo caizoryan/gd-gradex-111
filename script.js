@@ -92,8 +92,10 @@ fetch(link, {
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 
-		initHomePage(cleaned)
-		initPackery()
+		preloadThumbnailImages(cleaned).finally(() => {
+			initHomePage(cleaned)
+			initPackery()
+		})
 	})
 
 const gridContainer = document.querySelector(".grid-container");
@@ -272,6 +274,23 @@ function initHomePage(items) {
 `}).join("");
 
 	applyRandomAngles()
+}
+
+function preloadThumbnailImages(items) {
+	const thumbnailUrls = items
+		.map(item => item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : null)
+		.filter(Boolean)
+
+	const preloadPromises = thumbnailUrls.map(url => {
+		return new Promise(resolve => {
+			const img = new Image()
+			img.onload = () => resolve()
+			img.onerror = () => resolve()
+			img.src = url
+		})
+	})
+
+	return Promise.allSettled(preloadPromises)
 }
 
 
