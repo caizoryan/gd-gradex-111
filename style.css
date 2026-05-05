@@ -56,6 +56,7 @@ body{
 	/* border-bottom: 1px dotted black; */
 }
 
+
 /* .header-container ~ svg { */
 	/* margin-bottom: 5.2em; */
 /* } */
@@ -72,6 +73,34 @@ h1, h2, h3, h4, h5, h6{
 .header-container h4 {
 	/* font-weight: 600; */
 	font-size: 1em;
+	color: #666;
+  font-family: 'Plantin MT Pro', sans-serif;
+	text-transform: lowercase;
+}
+
+.header-container h1 {
+	font-size: 3em;
+}
+
+.fall-down {
+	-webkit-animation: fall 2.5s ;
+	-moz-animation: fall 2.5s ;
+	-o-animation: fall 2.5s ;
+	animation: fall 2.5s ;
+}
+
+.project-media{}
+
+@keyframes fall {
+
+ from {
+		transform: translateY(0px) rotate(var(--angle-random));
+		-webkit-animation-timing-function: cubic-bezier(0.33, 0, 0.66, 0.33);
+	}
+	to {
+		transform: translateY(220vh) rotate(var(--angle-other-random));
+			-webkit-animation-timing-function: cubic-bezier(0.33, 0.66, 0.66, 1);
+	}
 }
 
 
