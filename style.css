@@ -4,7 +4,7 @@
 }
 
 :root{
-    --container-max: 1000px;
+    --container-max: 1800px;
     --panel-max: 1000px;
     --content-padding-inline: 0;
     --header-margin-bottom: 3rem;
@@ -43,7 +43,8 @@ body{
 .header-container,
 .grid-container{
     width: 100%;
-    max-width: var(--container-max);
+
+    /* max-width: var(--container-max); */
 }
 
 .header-container{
@@ -51,12 +52,13 @@ body{
 	font-size: 2em;
 	display: flex;
 	justify-content: space-between;
+	margin-bottom: 3.2em;
 	/* border-bottom: 1px dotted black; */
 }
 
-.header-container ~ svg {
-	margin-bottom: 5.2em;
-}
+/* .header-container ~ svg { */
+	/* margin-bottom: 5.2em; */
+/* } */
 
 h1, h2, h3, h4, h5, h6{
     font-family: 'Plantin MT Pro', sans-serif;
@@ -76,6 +78,7 @@ h1, h2, h3, h4, h5, h6{
 .content-container{
     width: 100%;
     min-height: 100vh;
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -85,8 +88,8 @@ h1, h2, h3, h4, h5, h6{
 
     margin-top: var(--archive-margin-top);
     padding: var(--archive-padding);
-
     padding-inline: var(--content-padding-inline);
+	padding: 2em 8em;
 }
 
 
@@ -98,7 +101,6 @@ h1, h2, h3, h4, h5, h6{
 	flex-direction: column;
 	gap: 8px;
 	margin-bottom: 1rem;
-	mix-blend-mode: multiply;
 }
 
 .grid-item-thumbnail{
@@ -115,11 +117,18 @@ h1, h2, h3, h4, h5, h6{
 }
 
 article {
-	filter: grayscale(1);
-}
-
-article {
+	/* border: 1px solid black; */
+	padding: 1em;
 	transform: rotate(var(--angle-random));
+	filter: grayscale(1);
+	background-color: white;
+
+	background-image: repeating-linear-gradient(-16deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(74deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(164deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(254deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px);
+	background-size: 1.8px 100%, 100% 1.8px, 1.8px 100% , 100% 1.8px;
+	background-position: 0 0, 0 0, 100% 0, 0 100%;
+	background-repeat: no-repeat; 
+
+	transition: all 270ms;
 }
 
 /* article h3, */
@@ -129,150 +138,153 @@ article {
 /* } */
 article:hover {
 	filter: grayscale(0);
+	box-shadow: 0 0 25px 5px rgba(0, 0,0,.1);
+	transform: rotate(var(--angle-other-random)) scale(1.05);
+	
 }
 
 .grid-item-heading{
-	font-family: 'Neue Haas Grotesk Display Pro', serif;
-	font-size: 1rem;
-	font-weight: 500;
-	text-transform: uppercase;
+	font-family: 'Plantin MT Pro', 'Times', serif; 
+  font-size: 2.3em;
+  text-transform: lowercase;
+  font-weight: 100;
 	line-height: 1.2em;
-	margin-bottom: 0;
+	margin-bottom: -8px;
 }
 
 .grid-item-work-name{
-    font-family: 'Neue Haas Grotesk Display Pro', sans-serif;
-    font-weight: 400;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+		font-family: 'Plantin MT Pro', 'Times', serif; 
+    font-weight: 100;
+    font-size: 1.1em;
+    letter-spacing: 0.03em;
     color: #333;
 }
 
-@media (max-width: 400px){
-	:root{
-			--content-padding-inline: 1.25rem;
-			--header-margin-bottom: 1.5rem;
-			--header-size: 1.7rem;
-			--header-line-height: 2rem;
-			--header-actions-justify: stretch;
-			--search-width: 100%;
-			--archive-margin-top: 1.25rem;
-			--archive-padding: 0.75rem;
-			--grid-columns: 1;
-			--grid-gap: 0.75rem;
-			--preview-width: 96vw;
-			--preview-height: 76vh;
-			--preview-min-width: 0;
-			--preview-min-height: 12rem;
-			--preview-resize: none;
-			--preview-header-padding: 0.45rem 0.5rem;
-			--preview-text-size: 1rem;
-	}
-
-	.grid-item-heading{
-			font-size: 1rem;
-	}
-
-	.grid-item-work-name{
-			font-size: 0.85rem;
-	}
-}
-
-@media (min-width: 401px) and (max-width: 599px){
-    :root{
-        --content-padding-inline: 1.75rem;
-        --header-margin-bottom: 1.75rem;
-        --header-size: 1.9rem;
-        --header-line-height: 2.2rem;
-        --header-actions-justify: stretch;
-        --search-width: 100%;
-        --archive-margin-top: 1.75rem;
-        --archive-padding: 0.9rem;
-        --grid-columns: 2;
-        --grid-gap: 0.8rem;
-        --preview-width: min(95vw, 22rem);
-        --preview-height: min(78vh, 28rem);
-        --preview-min-width: 0;
-        --preview-min-height: 13rem;
-        --preview-resize: none;
-        --preview-header-padding: 0.5rem 0.55rem;
-        --preview-text-size: 1.05rem;
-    }
-
-    .grid-item-heading{
-        font-size: 1.05rem;
-    }
-
-    .grid-item-work-name{
-        font-size: 0.9rem;
-    }
-
-}
-
-@media (min-width: 600px) and (max-width: 767px){
-    :root{
-        --content-padding-inline: 1rem;
-        --header-margin-bottom: 2rem;
-        --header-size: 2.1rem;
-        --header-line-height: 2.5rem;
-        --archive-margin-top: 2rem;
-        --archive-padding: 1rem;
-        --panel-max: 500px;
-        --grid-columns: 2;
-        --grid-gap: 0.9rem;
-        --preview-width: min(92vw, 24rem);
-        --preview-height: min(80vh, 30rem);
-    }
-}
-
-@media (min-width: 768px) and (max-width: 999px){
-    :root{
-        --content-padding-inline: 1.5rem;
-        --header-margin-bottom: 2rem;
-        --header-size: 2.5rem;
-        --header-line-height: 3rem;
-        --archive-margin-top: 2.5rem;
-        --archive-padding: 1.25rem;
-        --panel-max: 800px;
-        --grid-columns: 4;
-        --preview-width: min(85vw, 28rem);
-        --preview-height: min(75vh, 32rem);
-    }
-}
-
-@media (min-width: 1000px) and (max-width: 1439px){
-    :root{
-        --container-max: 1000px;
-        --panel-max: 1000px;
-        --content-padding-inline: 0;
-        --header-size: 2.8rem;
-        --header-line-height: 3.2rem;
-        --grid-columns: 5;
-    }
-}
-
-@media (min-width: 1440px) and (max-width: 1799px){
-    :root{
-        --container-max: 1200px;
-        --panel-max: 1200px;
-        --content-padding-inline: 0;
-        --header-size: 3rem;
-        --header-line-height: 3.5rem;
-        --grid-columns: 6;
-    }
-}
-
-@media (min-width: 1800px){
-    :root{
-        --container-max: 1560px;
-        --panel-max: 1560px;
-        --content-padding-inline: 0;
-        --header-size: 3.35rem;
-        --header-line-height: 3.9rem;
-        --grid-columns: 7;
-        --grid-gap: 1.25rem;
-        --preview-width: 34rem;
-        --preview-height: 38rem;
-    }
-}
-
+/* @media (max-width: 400px){ */
+/* 	:root{ */
+/* 			--content-padding-inline: 1.25rem; */
+/* 			--header-margin-bottom: 1.5rem; */
+/* 			--header-size: 1.7rem; */
+/* 			--header-line-height: 2rem; */
+/* 			--header-actions-justify: stretch; */
+/* 			--search-width: 100%; */
+/* 			--archive-margin-top: 1.25rem; */
+/* 			--archive-padding: 0.75rem; */
+/* 			--grid-columns: 1; */
+/* 			--grid-gap: 0.75rem; */
+/* 			--preview-width: 96vw; */
+/* 			--preview-height: 76vh; */
+/* 			--preview-min-width: 0; */
+/* 			--preview-min-height: 12rem; */
+/* 			--preview-resize: none; */
+/* 			--preview-header-padding: 0.45rem 0.5rem; */
+/* 			--preview-text-size: 1rem; */
+/* 	} */
+/**/
+/* 	.grid-item-heading{ */
+/* 			font-size: 1rem; */
+/* 	} */
+/**/
+/* 	.grid-item-work-name{ */
+/* 			font-size: 0.85rem; */
+/* 	} */
+/* } */
+/**/
+/* @media (min-width: 401px) and (max-width: 599px){ */
+/*     :root{ */
+/*         --content-padding-inline: 1.75rem; */
+/*         --header-margin-bottom: 1.75rem; */
+/*         --header-size: 1.9rem; */
+/*         --header-line-height: 2.2rem; */
+/*         --header-actions-justify: stretch; */
+/*         --search-width: 100%; */
+/*         --archive-margin-top: 1.75rem; */
+/*         --archive-padding: 0.9rem; */
+/*         --grid-columns: 2; */
+/*         --grid-gap: 0.8rem; */
+/*         --preview-width: min(95vw, 22rem); */
+/*         --preview-height: min(78vh, 28rem); */
+/*         --preview-min-width: 0; */
+/*         --preview-min-height: 13rem; */
+/*         --preview-resize: none; */
+/*         --preview-header-padding: 0.5rem 0.55rem; */
+/*         --preview-text-size: 1.05rem; */
+/*     } */
+/**/
+/*     .grid-item-heading{ */
+/*         font-size: 1.05rem; */
+/*     } */
+/**/
+/*     .grid-item-work-name{ */
+/*         font-size: 0.9rem; */
+/*     } */
+/**/
+/* } */
+/**/
+/* @media (min-width: 600px) and (max-width: 767px){ */
+/*     :root{ */
+/*         --content-padding-inline: 1rem; */
+/*         --header-margin-bottom: 2rem; */
+/*         --header-size: 2.1rem; */
+/*         --header-line-height: 2.5rem; */
+/*         --archive-margin-top: 2rem; */
+/*         --archive-padding: 1rem; */
+/*         --panel-max: 500px; */
+/*         --grid-columns: 2; */
+/*         --grid-gap: 0.9rem; */
+/*         --preview-width: min(92vw, 24rem); */
+/*         --preview-height: min(80vh, 30rem); */
+/*     } */
+/* } */
+/**/
+/* @media (min-width: 768px) and (max-width: 999px){ */
+/*     :root{ */
+/*         --content-padding-inline: 1.5rem; */
+/*         --header-margin-bottom: 2rem; */
+/*         --header-size: 2.5rem; */
+/*         --header-line-height: 3rem; */
+/*         --archive-margin-top: 2.5rem; */
+/*         --archive-padding: 1.25rem; */
+/*         --panel-max: 800px; */
+/*         --grid-columns: 4; */
+/*         --preview-width: min(85vw, 28rem); */
+/*         --preview-height: min(75vh, 32rem); */
+/*     } */
+/* } */
+/**/
+/* @media (min-width: 1000px) and (max-width: 1439px){ */
+/*     :root{ */
+/*         --container-max: 1000px; */
+/*         --panel-max: 1000px; */
+/*         --content-padding-inline: 0; */
+/*         --header-size: 2.8rem; */
+/*         --header-line-height: 3.2rem; */
+/*         --grid-columns: 5; */
+/*     } */
+/* } */
+/**/
+/* @media (min-width: 1440px) and (max-width: 1799px){ */
+/*     :root{ */
+/*         --container-max: 1200px; */
+/*         --panel-max: 1200px; */
+/*         --content-padding-inline: 0; */
+/*         --header-size: 3rem; */
+/*         --header-line-height: 3.5rem; */
+/*         --grid-columns: 6; */
+/*     } */
+/* } */
+/**/
+/* @media (min-width: 1800px){ */
+/*     :root{ */
+/*         --container-max: 1560px; */
+/*         --panel-max: 1560px; */
+/*         --content-padding-inline: 0; */
+/*         --header-size: 3.35rem; */
+/*         --header-line-height: 3.9rem; */
+/*         --grid-columns: 7; */
+/*         --grid-gap: 1.25rem; */
+/*         --preview-width: 34rem; */
+/*         --preview-height: 38rem; */
+/*     } */
+/* } */
+/**/

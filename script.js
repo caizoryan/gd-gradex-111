@@ -101,7 +101,7 @@ fetch(link, {
 		// initialize with element
 		var pckry = new Packery( grid, {
 			// options...
-			gutter: 14,
+			gutter: -30,
 			itemSelector: '.grid-item'
 		});
 	})
@@ -118,7 +118,7 @@ function clamp(value, min, max) {
     return Math.min(Math.max(value, min), max);
 }
 
-function getRandomInRange(min, max) {
+function random(min, max) {
     return Math.random() * (max - min) + min;
 }
 
@@ -127,13 +127,13 @@ function isValidItemIndex(itemIndex) {
 }
 
 function createCircularCutClipPath(points = 24) {
-    const baseRadius = getRandomInRange(38, 45);
-    const variation = getRandomInRange(4, 10);
+    const baseRadius = random(38, 45);
+    const variation = random(4, 10);
     const coords = [];
 
     for (let i = 0; i < points; i += 1) {
         const angle = (Math.PI * 2 * i) / points;
-        const radius = baseRadius + getRandomInRange(-variation, variation);
+        const radius = baseRadius + random(-variation, variation);
         const x = clamp(50 + Math.cos(angle) * radius, 2, 98);
         const y = clamp(50 + Math.sin(angle) * radius, 2, 98);
         coords.push(`${x.toFixed(2)}% ${y.toFixed(2)}%`);
@@ -185,18 +185,24 @@ function getRandomClipPathForItem() {
 }
 
 // let strategy = 'kiki' 
-let strategy = 'bouba' 
-// let strategy = 'meh'
+// let strategy = 'bouba' 
+let strategy = 'meh'
+let curIndex = 1
 
 function applyRandomCutShapes() {
 	if (!gridContainer) return;
+	document.querySelectorAll('article').forEach(e => {
+
+		e.onmouseover = () => e.style.zIndex = ++curIndex
+		e.style.setProperty("--angle-random", random(-10, 10) + 'deg');
+		e.style.setProperty("--angle-other-random", random(-10, 10) + 'deg');
+	})
 	gridContainer.querySelectorAll(GRID_ITEM_SELECTOR).forEach((gridItem) => {
 		const thumbnail = gridItem.querySelector(THUMBNAIL_SELECTOR);
 		if (!thumbnail) return;
 
 		console.log(thumbnail)
 
-		thumbnail.style.setProperty("transform", 'rotate('+Math.random() * 5 - 2.5 +"deg)");
 
 		let rand = radiuses[Math.floor(Math.random()*radiuses.length)]
 		if(strategy == 'kiki') thumbnail.style.setProperty("--clip-random", getRandomClipPathForItem());
@@ -208,22 +214,21 @@ function populateGrid(items) {
 	if (!gridContainer) return;
 	gridContainer.innerHTML = items.map((item, sourceIndex) => {
 
-		let min = 250
-		let w = min + Math.random() * 70
+		let w = random(200, 350)
 		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
 		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
 
 		if (item.projectTitle == 'Cura Prototype') return ''
 
 		return `
-<a href='./profile.html#${item.id}'>
-			<article  class="grid-item crop-box" data-item-index="${sourceIndex}">
-					<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
-					 <h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
-					 <p class="grid-item-work-name">${item.projectTitle}</p>
-			</article>
-</a>
-	`}).join("");
+			<a href='./profile.html#${item.id}'>
+				<article  class="grid-item crop-box" data-item-index="${sourceIndex}">
+						<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
+						<p class="grid-item-work-name">${item.projectTitle}</p>
+						<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? item.thumbnail.url : './images/gray-square.jpg'}">
+				</article>
+			</a>
+`}).join("");
 
 
 	applyRandomCutShapes()
