@@ -71,6 +71,8 @@ fetch(link, {
 			console.log(attr)
 			o.description = attr.field_project_description.value
 			o.bio = attr.field_short_biography?.value
+			o.portfolioLink = attr.field_portfolio_site_link?.uri
+			o.instagramLink = attr.field_instagram_link?.uri
 			o.images = images
 			o.thumbnail = thumbnail
 			o.id = x.id
@@ -92,14 +94,7 @@ fetch(link, {
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 
 		initHomePage(cleaned)
-
-		 let grid = document.querySelector('.grid-container');
-		// initialize with element
-		pckry = new Packery( grid, {
-			// options...
-			gutter: -30,
-			itemSelector: '.grid-item'
-		});
+		initPackery()
 	})
 
 const gridContainer = document.querySelector(".grid-container");
@@ -111,8 +106,50 @@ function random(min, max) {
 let curIndex = 1
 
 let pckryDestroyTimeout
+let resizeTimeout
+
+function isMobileViewport() {
+	return window.matchMedia('(max-width: 768px)').matches
+}
+
+function clearPackeryStyles() {
+	if (gridContainer) {
+		gridContainer.style.height = ''
+		gridContainer.style.position = ''
+	}
+
+	document.querySelectorAll('.grid-item').forEach(item => {
+		item.style.position = ''
+		item.style.left = ''
+		item.style.top = ''
+		item.style.transform = ''
+	})
+}
+
+function destroyPackery() {
+	if (pckry) {
+		pckry.destroy()
+		pckry = null
+	}
+	clearPackeryStyles()
+}
+
+function initPackery() {
+	if (isMobileViewport()) {
+		destroyPackery()
+		return
+	}
+	const grid = document.querySelector('.grid-container')
+	if (!grid) return
+	destroyPackery()
+	pckry = new Packery(grid, {
+		gutter: -30,
+		itemSelector: '.grid-item'
+	})
+}
 
 function openProfile(id) {
+	document.body.classList.add('profile-open')
 	let el = document.querySelector(`*[data-id='${id}']`)
 	document.querySelectorAll("*[data-id]").forEach(e => {
 		if (e != el) e.classList.add('fall-down')
@@ -124,7 +161,7 @@ function openProfile(id) {
 
 			if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
 			pckryDestroyTimeout = setTimeout(() => {
-				pckry.destroy()
+				destroyPackery()
 			}, 1500)
 		}
 	})
@@ -162,6 +199,13 @@ function appendProjectImages(id){
 			${project.bio}
 	</p>
 </div>
+
+${project.portfolioLink || project.instagramLink ? `
+<div class='designer-links'>
+	${project.portfolioLink ? `<a href='${project.portfolioLink}' target='_blank' rel='noopener noreferrer'>Portfolio ↗</a>` : ''}
+	${project.instagramLink ? `<a href='${project.instagramLink}' target='_blank' rel='noopener noreferrer'>Instagram ↗</a>` : ''}
+</div>
+` : ''}
 `
 
 
@@ -187,6 +231,7 @@ function applyRandomAngles() {
 }
 
 function reset(){
+	document.body.classList.remove('profile-open')
 	if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
 	initHomePage(cleaned)
 
@@ -197,13 +242,7 @@ function reset(){
 	projectMedia.innerHTML = ''
 	projectMetadata.innerHTML = ''
 
-	pckry ? pckry.destroy() : null
-	 let grid = document.querySelector('.grid-container');
-	pckry = new Packery(grid, {
-		// options...
-		gutter: -30,
-		itemSelector: '.grid-item'
-	});
+	initPackery()
 }
 
 function initHomePage(items) {
@@ -244,3 +283,21 @@ window.onhashchange = e => {
 	if (hash.slice(1) == ''){reset()}
 	else if (cleaned.find(e => e.id == hash.slice(1))) openProfile(hash.slice(1))
 }
+
+window.addEventListener('resize', () => {
+	if (resizeTimeout) clearTimeout(resizeTimeout)
+	resizeTimeout = setTimeout(() => {
+		if (!cleaned) return
+		if (window.location.hash.slice(1) !== '') return
+		if (isMobileViewport()) {
+			destroyPackery()
+			return
+		}
+		if (!pckry) {
+			initPackery()
+			return
+		}
+		pckry.reloadItems()
+		pckry.layout()
+	}, 180)
+})

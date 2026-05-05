@@ -37,12 +37,7 @@ html{
 body{
 	font-family: 'Plantin MT Pro', sans-serif;
 	padding: 0;
-
-		background: #fff2;
-		/* overflow-y: hidden; */
-		/* overflow-x: hidden; */
-		/* background-size: 50px 50px; */
-		/* background-image: linear-gradient(to right, #eee 1px, transparent 1px), linear-gradient(to bottom, #eee 1px, transparent 1px); */
+	background: #fff2;
 }
 
 a {
@@ -53,8 +48,6 @@ a {
 .header-container,
 .grid-container{
     width: 100%;
-
-    /* max-width: var(--container-max); */
 }
 
 .header-container{
@@ -62,13 +55,7 @@ a {
 	display: flex;
 	height: 200px;
 	justify-content: space-between;
-	/* border-bottom: 1px dotted black; */
 }
-
-
-/* .header-container ~ svg { */
-	/* margin-bottom: 5.2em; */
-/* } */
 
 h1, h2, h3, h4, h5, h6{
     font-family: 'Plantin MT Pro', sans-serif;
@@ -79,10 +66,9 @@ h1, h2, h3, h4, h5, h6{
 }
 
 .header-container h4 {
-	/* font-weight: 600; */
 	font-size: 1em;
 	color: #666;
-  font-family: 'Plantin MT Pro', sans-serif;
+	font-family: 'Plantin MT Pro', sans-serif;
 	text-transform: lowercase;
 }
 
@@ -97,45 +83,59 @@ h1, h2, h3, h4, h5, h6{
 	animation: fall 1.5s ;
 }
 
-.project-media{
-	position: fixed;
-	width: 60vw;
-  height: 100vh;
-  right: 6rem;
-  top: 0px;
-  display: none;
-  overflow-y: scroll;
-  padding-top: 200px;
+p {
+	font-size: 1.4em;
+	margin-bottom: .8em;
 }
 
-p {
-  font-size: 1.4em;
-  margin-bottom: .8em;
+.project-media,
+.project-metadata{
+	position: fixed;
+	display: none;
+	overflow-y: scroll;
+}
+
+.project-media{
+	width: 60vw;
+	height: 100vh;
+	right: 6rem;
+	top: 0;
+	padding-top: 200px;
 }
 
 .project-metadata{
-	position: fixed;
-  width: 25vw;
-  height: calc(100vh - 200px);
-  left: 8rem;
-  top: 200px;
-  display: none;
-  overflow-y: scroll;
-  opacity: 0;
-  transition: all 870ms;
+	width: 25vw;
+	height: calc(100vh - 200px);
+	left: 8rem;
+	top: 200px;
+	opacity: 0;
+	transition: all 870ms;
 	padding-bottom: 100px;
 	z-index: 0;
 }
 
-.project-data {
+.project-data,
+.designer-data {
 	padding-top: 2em;
 	border-top: 1px solid black;
 }
 
 .designer-data {
 	margin-top: 5em;
+}
+
+.designer-links{
+	margin-top: 5em;
 	padding-top: 2em;
 	border-top: 1px solid black;
+}
+
+.designer-links a{
+	display: block;
+	margin-bottom: .6em;
+	font-size: 1.2em;
+	text-decoration: underline;
+	text-underline-offset: .12em;
 }
 
 .project-img {
@@ -171,7 +171,6 @@ p {
 
 
 .grid-item{
-		/* width: 300px; */
 	width: min-content;
 	height: min-content;
 	display: flex;
@@ -182,12 +181,11 @@ p {
 }
 
 .grid-item-thumbnail{
-    border-radius: 0;
-    margin-bottom: 0.5rem;
-    clip-path: var(--clip-random);
+	margin-bottom: 0.5rem;
+	clip-path: var(--clip-random);
 		border-radius: var(--border-random);
-    transition: all 260ms ease;
-    cursor: pointer;
+	transition: all 260ms ease;
+	cursor: pointer;
 }
 
 .grid-item-thumbnail:hover{
@@ -195,7 +193,6 @@ p {
 }
 
 article {
-	/* border: 1px solid black; */
 	padding: 1em;
 	transform: rotate(var(--angle-random));
 	filter: grayscale(1);
@@ -204,39 +201,33 @@ article {
 	background-image: repeating-linear-gradient(-16deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(74deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(164deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px), repeating-linear-gradient(254deg, #333333, #333333 4px, transparent 4px, transparent 7px, #333333 7px);
 	background-size: 1.8px 100%, 100% 1.8px, 1.8px 100% , 100% 1.8px;
 	background-position: 0 0, 0 0, 100% 0, 0 100%;
-	background-repeat: no-repeat; 
+	background-repeat: no-repeat;
 
 	transition: all 270ms;
 }
 
-/* article h3, */
-/* article p */
-/* { */
-/* 	opacity: .8; */
-/* } */
 article:hover {
 	filter: grayscale(0);
 	box-shadow: 0 0 25px 5px rgba(0, 0,0,.1);
 	transform: rotate(var(--angle-other-random)) scale(1.05);
-	
 }
 
 .grid-item-heading{
-	font-family: 'Plantin MT Pro', 'Times', serif; 
-  font-size: 2.3em;
-  text-transform: lowercase;
-  font-weight: 100;
+	font-family: 'Plantin MT Pro', 'Times', serif;
+	font-size: 2.3em;
+	text-transform: lowercase;
+	font-weight: 100;
 	line-height: 1.2em;
 	color: black;
 	margin-bottom: -8px;
 }
 
 .grid-item-work-name{
-		font-family: 'Plantin MT Pro', 'Times', serif; 
-    font-weight: 100;
-    font-size: 1.1em;
-    letter-spacing: 0.03em;
-    color: #333;
+	font-family: 'Plantin MT Pro', 'Times', serif;
+	font-weight: 100;
+	font-size: 1.1em;
+	letter-spacing: 0.03em;
+	color: #333;
 }
 
 .project-metadata h1,
@@ -255,3 +246,203 @@ article:hover {
 .project-metadata h4{ font-size: 1.8em }
 .project-metadata h5{ font-size: 1.5em }
 .project-metadata h6{ font-size: 1.3em }
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+	:root{
+		--mid-side-left: 4rem;
+		--mid-side-right: 3rem;
+		--mid-column-gap: 1.5rem;
+		--mid-top-offset: 180px;
+	}
+
+	.project-metadata{
+		left: var(--mid-side-left);
+		width: calc((100vw - var(--mid-side-left) - var(--mid-side-right) - var(--mid-column-gap)) * 0.3);
+		top: var(--mid-top-offset);
+		height: calc(100vh - var(--mid-top-offset));
+	}
+
+	.project-media{
+		left: auto;
+		right: var(--mid-side-right);
+		width: calc((100vw - var(--mid-side-left) - var(--mid-side-right) - var(--mid-column-gap)) * 0.7);
+		padding-top: var(--mid-top-offset);
+	}
+}
+
+@media (max-width: 1024px) {
+	.content-container{
+		padding: 3rem 2.5rem;
+		align-items: stretch;
+	}
+
+	:root{
+		--tablet-side-gutter: 2.5rem;
+		--tablet-column-gap: 1.25rem;
+		--tablet-top-offset: 150px;
+	}
+
+	.header-container{
+		height: auto;
+		min-height: 120px;
+		gap: 1rem;
+		align-items: flex-start;
+	}
+
+	.header-container h1 {
+		font-size: 2.4em;
+	}
+
+	.project-metadata{
+		left: 0;
+		width: 30vw;
+		height: calc(100vh - var(--tablet-top-offset));
+		top: var(--tablet-top-offset);
+		padding-left: var(--tablet-side-gutter);
+		padding-right: calc(var(--tablet-column-gap) * 0.5);
+		padding-bottom: 2rem;
+		z-index: 2;
+	}
+
+	.project-media{
+		left: 30vw;
+		right: auto;
+		width: 70vw;
+		padding-top: var(--tablet-top-offset);
+		padding-left: calc(var(--tablet-column-gap) * 0.5);
+		padding-right: var(--tablet-side-gutter);
+		z-index: 1;
+	}
+
+	.grid-container{
+		display: block !important;
+		height: auto !important;
+	}
+
+	.grid-container > a{
+		display: block;
+	}
+
+	.grid-item{
+		width: calc((100% - 2rem) / 3);
+		max-width: none;
+		min-width: 0;
+		margin-bottom: 1rem;
+	}
+
+	.grid-item-thumbnail{
+		display: block;
+		width: 100% !important;
+		height: auto !important;
+		max-width: 100% !important;
+	}
+}
+
+@media (min-width: 769px) and (max-width: 899px) {
+	.grid-item{
+		width: calc((100% - 1rem) / 2);
+	}
+}
+
+@media (max-width: 768px) {
+	.content-container{
+		padding: 1.25rem 1.25rem 2rem;
+	}
+
+	.header-container{
+		flex-direction: column;
+		justify-content: flex-start;
+		gap: 0.25rem;
+		min-height: 0;
+		height: auto;
+		margin-bottom: 0.5rem;
+	}
+
+	.header-container h1{
+		font-size: 2em;
+	}
+
+	.header-container h4{
+		font-size: 0.9em;
+	}
+
+	.grid-container{
+		display: grid !important;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.8rem;
+		height: auto !important;
+		min-height: 0;
+	}
+
+	.grid-container > a{
+		display: block;
+		min-width: 0;
+	}
+
+	body.profile-open .grid-container{
+		height: 0 !important;
+		min-height: 0 !important;
+		overflow: hidden;
+		gap: 0;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+
+	.grid-item{
+		width: 100% !important;
+		max-width: 100%;
+		margin-bottom: 0;
+	}
+
+	article{
+		transform: none;
+	}
+
+	article:hover {
+		transform: scale(1.02);
+	}
+
+	.grid-item-heading{
+		font-size: 1.7em;
+	}
+
+	.grid-item-thumbnail{
+		width: 100% !important;
+		height: auto !important;
+		max-width: 100%;
+	}
+
+	.project-metadata,
+	.project-media{
+		position: static;
+		width: 100%;
+		height: auto;
+		left: auto;
+		right: auto;
+		top: auto;
+		padding-top: 0;
+		padding-bottom: 0;
+		padding-left: 0;
+		padding-right: 0;
+		margin-left: 0;
+		margin-right: 0;
+		overflow: visible;
+	}
+
+	.project-metadata{
+		margin-top: 1rem;
+		transition: opacity 400ms;
+	}
+
+	.project-media{
+		margin-top: 1rem;
+	}
+
+	p{
+		font-size: 1.15em;
+	}
+
+	.designer-data{
+		margin-top: 2rem;
+	}
+}
