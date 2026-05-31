@@ -17,6 +17,11 @@ html{
     font-size: 12.5px;
 }
 
+iframe {
+	outline: none;
+  border: none;
+}
+
 body{
 	font-family: 'Plantin MT Pro', sans-serif;
 	padding: 0;
@@ -31,6 +36,25 @@ a {
 .header-container,
 .grid-container{
     width: 100%;
+}
+
+.overlay {
+	position: fixed;
+	z-index: 99;
+	background-color: black;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	display: none;
+
+	justify-content: center;
+	align-items: center;
+}
+
+.overlay img {
+	max-width: 95vw;
+	max-height: 95vh;
 }
 
 .header-container{
@@ -207,14 +231,16 @@ article:hover {
 	text-transform: lowercase;
 	font-weight: 100;
 	line-height: 1.2em;
-	color: black;
 	margin-bottom: -8px;
+	color: black;
 }
 
 .grid-item-work-name{
-	font-family: 'Plantin MT Pro', 'Times', serif;
+	font-size: 1.8em;
+  letter-spacing: 0.03em;
+  color: #333;
+  font-style: italic;
 	font-weight: 100;
-	font-size: 1.1em;
 	letter-spacing: 0.03em;
 	color: #333;
 }
