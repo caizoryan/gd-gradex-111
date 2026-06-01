@@ -186,10 +186,16 @@ fetch(link, {
 
 		console.log(allTags)
 
+
 		preloadThumbnailImages(cleaned).finally(() => {
 			initHomePage(cleaned)
 			initPackery()
 		})
+
+		setTimeout(() => {
+			let startHash = window.location.hash.slice(1)
+			if (startHash != '') checkHash(startHash)
+		}, 850)
 	})
 
 const gridContainer = document.querySelector(".grid-container");
@@ -309,7 +315,7 @@ function appendProjectImages(id){
 		<p class='project-description'>
 				${project.description}
 		</p>
-		<p class='tags'>${project.tags.join(', ')}</p>
+		<p class='tags'><span class='tag'>TAGS </span>${project.tags.join(', ')}</p>
 	</div>
 
 	<div class='designer-data'>
@@ -438,12 +444,18 @@ function imageStyleUrl(originalUrl, style) {
   return `${url.origin}/web/sites/default/files/styles/${style}/public${path}`;
 }
 
+function checkHash(hash){
+	console.log(hash)
+	if (!cleaned) return
+	if (hash == ''){reset()}
+	else if (cleaned.find(e => e.id == hash)) openProfile(hash)
+}
+
 window.onhashchange = e => {
 	let hash = window.location.hash
-	console.log(hash.slice(1))
-	if (hash.slice(1) == ''){reset()}
-	else if (cleaned.find(e => e.id == hash.slice(1))) openProfile(hash.slice(1))
+	checkHash(hash.slice(1))
 }
+
 
 let resizeTimeout
 window.addEventListener('resize', () => {
