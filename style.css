@@ -220,7 +220,7 @@ article {
 }
 
 .tags-container {
-	margin-bottom: 2.5em;
+	margin-bottom: 4.5em;
 }
 
 .tags-container button {
@@ -230,8 +230,12 @@ article {
   margin: .25em;
   border: none;
 	padding: .5em;
-  background-image: repeating-linear-gradient(-16deg, #333, #333 4px, transparent 4px, transparent 7px, #333 7px), repeating-linear-gradient(74deg, #333, #333 4px, transparent 4px, transparent 7px, #333 7px), repeating-linear-gradient(164deg, #333, #333 4px, transparent 4px, transparent 7px, #333 7px), repeating-linear-gradient(254deg, #333, #333 4px, transparent 4px, transparent 7px, #333 7px);
-  background-size: 1.8px 100%, 100% 1.8px, 1.8px 100% , 100% 1.8px;
+	--color: #333;
+	--size: 3px;
+	--sizee: 1.3px;
+	--len: 5px;
+  background-image: repeating-linear-gradient(-16deg, var(--color), var(--color) var(--size), transparent var(--size), transparent var(--len), var(--color) var(--len)), repeating-linear-gradient(74deg, var(--color), var(--color) var(--size), transparent var(--size), transparent var(--len), var(--color) var(--len)), repeating-linear-gradient(164deg, var(--color), var(--color) var(--size), transparent var(--size), transparent var(--len), var(--color) var(--len)), repeating-linear-gradient(254deg, var(--color), var(--color) var(--size), transparent var(--size), transparent var(--len), var(--color) var(--len));
+  background-size: var(--sizee) 100%, 100% var(--sizee), var(--sizee) 100% , 100% var(--sizee);
   background-position: 0 0, 0 0, 100% 0, 0 100%;
   background-repeat: no-repeat;
 }
