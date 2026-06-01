@@ -7,14 +7,7 @@ let pckry
 
 let projectMedia = document.querySelector('.project-media')
 let projectMetadata = document.querySelector('.project-metadata')
-let overlay = document.querySelector(".overlay")
-
-function resetOverlay() {
-	overlay.innerHTML = ''
-	overlay.style.display = 'none'
-}
-
-overlay.onclick = resetOverlay
+let overlay = document.querySelector('.overlay')
 
 let included  = {}
 let cleaned 
@@ -205,11 +198,6 @@ function random(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-let curIndex = 1
-let activeProfileId = null
-
-let pckryDestroyTimeout
-
 function isMobileViewport() {
 	return window.matchMedia('(max-width: 768px)').matches
 }
@@ -220,12 +208,7 @@ function clearPackeryStyles() {
 		gridContainer.style.position = ''
 	}
 
-	document.querySelectorAll('.grid-item').forEach(item => {
-		item.style.position = ''
-		item.style.left = ''
-		item.style.top = ''
-		item.style.transform = ''
-	})
+	ProjectTeaser.clearPackeryStyles()
 }
 
 function destroyPackery() {
@@ -253,117 +236,23 @@ function initPackery() {
 	})
 }
 
+const projectFull = new ProjectFull({
+	mediaEl: projectMedia,
+	metadataEl: projectMetadata,
+	overlay,
+	tagsContainer,
+	random,
+	video,
+	destroyPackery
+})
+
 function openProfile(id) {
-	if (activeProfileId === id && document.body.classList.contains('profile-open')) return
-	activeProfileId = id
-
-	document.body.classList.add('profile-open')
-	tagsContainer.innerHTML = ''
-	let el = document.querySelector(`*[data-id='${id}']`)
-	document.querySelectorAll("*[data-id]").forEach(e => {
-		if (e != el) e.classList.add('fall-down')
-		e.onanimationend = () => { 
-			e.remove()
-			window.scrollTo({behavior: 'smooth', top: 0, left: 0})
-			el.classList.add('fall-down')
-			el.onanimationend = () => el.remove()
-
-			if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
-			pckryDestroyTimeout = setTimeout(() => {
-				destroyPackery()
-			}, 1500)
-		}
-	})
-
-	projectMedia.style.display = 'block'
-	projectMetadata.style.display = 'block'
-	projectMedia.innerHTML = ''
-	appendProjectImages(id)
+	projectFull.open(id, cleaned)
 }
 
-function appendProjectImages(id){
-	let project = cleaned.find(e => e.id == id)
-
-	project.images.forEach(item => {
-		let img = document.createElement("img")
-		let fullscreen = document.createElement("img")
-		img.src = item.url
-		fullscreen.src = item.url
-
-		img.classList.add('project-img')
-		img.style.opacity = 0
-
-		img.onclick = () => {
-			overlay.style.display = 'flex'
-			overlay.appendChild(fullscreen)
-		}
-
-		projectMedia.appendChild(img)
-		setTimeout(() => {
-			img.style.opacity=1
-		}, random(500, 1500))
-	})
-
-	project.videos.forEach(item => {
-		console.log(item.field_video_url)
-		projectMedia.appendChild(video.createEmbed(item.field_video_url.uri, "100%", '600px'))
-	})
-
-	projectMetadata.innerHTML = `
-	<div class='project-data'>
-		<h4>${project.projectTitle}</h4>
-		<p class='project-description'>
-				${project.description}
-		</p>
-		<p class='tags'><span class='tag'>TAGS </span>${project.tags.join(', ')}</p>
-	</div>
-
-	<div class='designer-data'>
-		<h4>${project.firstName} ${project.lastName}</h4>
-		<p class='project-description'>
-				${project.bio}
-		</p>
-	</div>
-
-	${project.portfolioLink || project.instagramLink ? `
-	<div class='designer-links'>
-		${project.portfolioLink ? `<a href='${project.portfolioLink}' target='_blank' rel='noopener noreferrer'>Portfolio ↗</a>` : ''}
-		${project.instagramLink ? `<a href='${project.instagramLink}' target='_blank' rel='noopener noreferrer'>Instagram ↗</a>` : ''}
-	</div>
-	` : ''}
-	`
-		setTimeout(() => {
-			projectMetadata.style.opacity=1
-		}, random(5, 15))
-}
-
-function applyRandomAngles() {
-	document.querySelectorAll("*[data-id]").forEach(e => {
-		e.onclick = () => {
-			openProfile(e.getAttribute('data-id'), e)
-		}
-	})
-	document.querySelectorAll('article').forEach(e => {
-		e.onmouseover = () => e.style.zIndex = ++curIndex
-		e.style.setProperty("--angle-random", random(-8, 8) + 'deg');
-		e.style.setProperty("--angle-other-random", random(-8, 8) + 'deg');
-	})
-}
-
-function reset(){
-	document.body.classList.remove('profile-open')
-	// tagsContainer.innerHTML = ''
-	activeProfileId = null
-	if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
+function reset() {
+	projectFull.close()
 	initHomePage(cleaned)
-
-	projectMedia.style.display = 'none'
-	projectMetadata.style.display = 'none'
-	projectMetadata.style.opacity = 0
-
-	projectMedia.innerHTML = ''
-	projectMetadata.innerHTML = ''
-
 	initPackery()
 }
 
@@ -383,7 +272,7 @@ function initHomePage(items) {
 			document.querySelectorAll("[selected='true']").forEach(e => e.setAttribute('selected', 'false'))
 			btn.setAttribute('selected', 'true')
 			let hideEls = []
-			document.querySelectorAll(".tagged")
+			document.querySelectorAll(ProjectTeaser.TAGGED_SELECTOR)
 			.forEach(tagItem => {
 				tagItem.style.opacity = 1
 				let attr = tagItem.getAttribute('tags')
@@ -401,22 +290,7 @@ function initHomePage(items) {
 	})
 	tagButtons.forEach(e => tagsContainer.appendChild(e))
 
-	gridContainer.innerHTML = items.map((item) => {
-		let w = random(200, 350)
-		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
-		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
-
-		return `
-		<a class='tagged' href='#${item.id}' tags='All, ${item.tags.join(", ")}'>
-			<article  class="grid-item crop-box" data-id="${item.id}">
-				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
-				<p class="grid-item-work-name">${item.projectTitle}</p>
-				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'thumbnail') : './images/gray-square.jpg'}" loading="lazy">
-				</article>
-		</a>
-`}).join("");
-
-	applyRandomAngles()
+	ProjectTeaser.renderAll(gridContainer, items, { random, imageStyleUrl })
 }
 
 function preloadThumbnailImages(items) {
@@ -480,7 +354,7 @@ window.addEventListener('resize', () => {
 })
 
 window.addEventListener('keydown', (e) => {
-	if (e.key == 'Escape' && overlay.style.display == 'flex'){
-		resetOverlay()
+	if (e.key == 'Escape' && overlay.style.display == 'flex') {
+		projectFull.resetOverlay()
 	}
 })
