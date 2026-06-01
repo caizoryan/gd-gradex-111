@@ -411,7 +411,7 @@ function initHomePage(items) {
 			<article  class="grid-item crop-box" data-id="${item.id}">
 				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
 				<p class="grid-item-work-name">${item.projectTitle}</p>
-				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : './images/gray-square.jpg'}">
+				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'thumbnail') : './images/gray-square.jpg'}" loading="lazy">
 				</article>
 		</a>
 `}).join("");
@@ -421,7 +421,7 @@ function initHomePage(items) {
 
 function preloadThumbnailImages(items) {
 	const thumbnailUrls = items
-		.map(item => item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : null)
+		.map(item => item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'thumbnail') : null)
 		.filter(Boolean)
 
 	const preloadPromises = thumbnailUrls.map(url => {
@@ -429,7 +429,7 @@ function preloadThumbnailImages(items) {
 			const img = new Image()
 			img.onload = () => resolve()
 			img.onerror = () => resolve()
-			img.src = url
+			img.src = url.replace("large","thumbnail")
 		})
 	})
 
