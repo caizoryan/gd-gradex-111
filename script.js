@@ -2,14 +2,12 @@
 // Welcome Lurker!
 // ------------------
 let main = 'https://2026.ocadu.gd/'
-let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image,field_thumbnail_image`
+let link = `https://2222.ocadu.gd/web/jsonapi/node/student_project?include=field_media_gallery,field_media_gallery.field_p_image,field_thumbnail_image,field_tags`
 let pckry
 
 let projectMedia = document.querySelector('.project-media')
 let projectMetadata = document.querySelector('.project-metadata')
 let overlay = document.querySelector(".overlay")
-
-
 
 function resetOverlay() {
 	overlay.innerHTML = ''
@@ -93,8 +91,9 @@ const video = {
 };
 
 function init(){
-
 }
+
+let allTags = new Set()
 
 
 fetch(link, {
@@ -112,8 +111,11 @@ fetch(link, {
 
 		cleaned = (res.data.map(x => {
 			let attr = x.attributes
-			let tags = x.relationships.field_tags.data
-			console.log(tags)
+			let tags = x.relationships.field_tags
+			tags = tags.data.map(e => included[e.id]?.attributes.name)
+			tags.forEach(e => allTags.add(e))
+			// tags.data.map(e => console.log(e.id, included[e.id]?.attributes.name))
+			// console.log(tags.data, included[tags.data.id])
 			let media = x.relationships.field_media_gallery.data
 			let thumbnail = x.relationships.field_thumbnail_image?.data
 			if (thumbnail){
@@ -164,6 +166,7 @@ fetch(link, {
 			o.images = images
 			o.videos = videoObjects
 			o.thumbnail = thumbnail
+			o.tags = tags
 			o.id = x.id
 			if (!o.thumbnail && images && images.length > 0) o.thumbnail = images[0]
 
@@ -181,6 +184,8 @@ fetch(link, {
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 			.sort(() => Math.random() > .5 ? 1 : -1 )
 
+		console.log(allTags)
+
 		preloadThumbnailImages(cleaned).finally(() => {
 			initHomePage(cleaned)
 			initPackery()
@@ -188,6 +193,7 @@ fetch(link, {
 	})
 
 const gridContainer = document.querySelector(".grid-container");
+const tagsContainer = document.querySelector(".tags-container");
 
 function random(min, max) {
     return Math.random() * (max - min) + min;
@@ -197,7 +203,6 @@ let curIndex = 1
 let activeProfileId = null
 
 let pckryDestroyTimeout
-let resizeTimeout
 
 function isMobileViewport() {
 	return window.matchMedia('(max-width: 768px)').matches
@@ -247,6 +252,7 @@ function openProfile(id) {
 	activeProfileId = id
 
 	document.body.classList.add('profile-open')
+	tagsContainer.innerHTML = ''
 	let el = document.querySelector(`*[data-id='${id}']`)
 	document.querySelectorAll("*[data-id]").forEach(e => {
 		if (e != el) e.classList.add('fall-down')
@@ -267,7 +273,6 @@ function openProfile(id) {
 	projectMetadata.style.display = 'block'
 	projectMedia.innerHTML = ''
 	appendProjectImages(id)
-
 }
 
 function appendProjectImages(id){
@@ -299,31 +304,31 @@ function appendProjectImages(id){
 	})
 
 	projectMetadata.innerHTML = `
-<div class='project-data'>
-	<h4>${project.projectTitle}</h4>
-	<p class='project-description'>
-			${project.description}
-	</p>
-</div>
+	<div class='project-data'>
+		<h4>${project.projectTitle}</h4>
+		<p class='project-description'>
+				${project.description}
+		</p>
+		<p class='tags'>${project.tags.join(', ')}</p>
+	</div>
 
-<div class='designer-data'>
-	<h4>${project.firstName} ${project.lastName}</h4>
-	<p class='project-description'>
-			${project.bio}
-	</p>
-</div>
+	<div class='designer-data'>
+		<h4>${project.firstName} ${project.lastName}</h4>
+		<p class='project-description'>
+				${project.bio}
+		</p>
+	</div>
 
-${project.portfolioLink || project.instagramLink ? `
-<div class='designer-links'>
-	${project.portfolioLink ? `<a href='${project.portfolioLink}' target='_blank' rel='noopener noreferrer'>Portfolio ↗</a>` : ''}
-	${project.instagramLink ? `<a href='${project.instagramLink}' target='_blank' rel='noopener noreferrer'>Instagram ↗</a>` : ''}
-</div>
-` : ''}
-`
-	setTimeout(() => {
-		projectMetadata.style.opacity=1
-	}, random(5, 15))
-
+	${project.portfolioLink || project.instagramLink ? `
+	<div class='designer-links'>
+		${project.portfolioLink ? `<a href='${project.portfolioLink}' target='_blank' rel='noopener noreferrer'>Portfolio ↗</a>` : ''}
+		${project.instagramLink ? `<a href='${project.instagramLink}' target='_blank' rel='noopener noreferrer'>Instagram ↗</a>` : ''}
+	</div>
+	` : ''}
+	`
+		setTimeout(() => {
+			projectMetadata.style.opacity=1
+		}, random(5, 15))
 }
 
 function applyRandomAngles() {
@@ -334,13 +339,14 @@ function applyRandomAngles() {
 	})
 	document.querySelectorAll('article').forEach(e => {
 		e.onmouseover = () => e.style.zIndex = ++curIndex
-		e.style.setProperty("--angle-random", random(-10, 10) + 'deg');
-		e.style.setProperty("--angle-other-random", random(-10, 10) + 'deg');
+		e.style.setProperty("--angle-random", random(-8, 8) + 'deg');
+		e.style.setProperty("--angle-other-random", random(-8, 8) + 'deg');
 	})
 }
 
 function reset(){
 	document.body.classList.remove('profile-open')
+	// tagsContainer.innerHTML = ''
 	activeProfileId = null
 	if (pckryDestroyTimeout) clearTimeout(pckryDestroyTimeout)
 	initHomePage(cleaned)
@@ -357,21 +363,51 @@ function reset(){
 
 function initHomePage(items) {
 	if (!gridContainer) return;
+
+	let tagButtons = ['All', ...Array.from(allTags)].map(e => {
+		let btn = document.createElement("button")
+		btn.innerText = e
+		if (e == 'All'){
+			btn.style.paddingRight = '2em'
+			btn.style.paddingLeft = '2em'
+			btn.setAttribute('selected', 'true')
+		}
+
+		btn.onclick = () => {
+			document.querySelectorAll("[selected='true']").forEach(e => e.setAttribute('selected', 'false'))
+			btn.setAttribute('selected', 'true')
+			let hideEls = []
+			document.querySelectorAll(".tagged")
+			.forEach(tagItem => {
+				tagItem.style.opacity = 1
+				let attr = tagItem.getAttribute('tags')
+					console.log(attr, e, attr.includes(e))
+				if (attr.includes(e)) return false
+				else hideEls.push(tagItem)
+
+			})
+			hideEls.forEach(e => {
+				e.style.opacity = .1 
+			})
+			pckry.reloadItems()
+		}
+		return btn
+	})
+	tagButtons.forEach(e => tagsContainer.appendChild(e))
+
 	gridContainer.innerHTML = items.map((item) => {
 		let w = random(200, 350)
 		let ratio = w/(item.thumbnail?.width ? item.thumbnail.width : w)
 		let height = ratio * (item.thumbnail?.height ? item.thumbnail.height : w)
 
-		if (item.projectTitle == 'Cura Prototype') return ''
-
 		return `
-<a href='#${item.id}'>
+		<a class='tagged' href='#${item.id}' tags='All, ${item.tags.join(", ")}'>
 			<article  class="grid-item crop-box" data-id="${item.id}">
 				<h3 class="grid-item-heading">${item.firstName + ' ' + (item.lastName ? item.lastName : '')}</h3>
 				<p class="grid-item-work-name">${item.projectTitle}</p>
 				<img style='width:${w}px; height:${height}px;' class="grid-item-thumbnail" src="${item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'large') : './images/gray-square.jpg'}">
-			</article>
-</a>
+				</article>
+		</a>
 `}).join("");
 
 	applyRandomAngles()
@@ -409,22 +445,26 @@ window.onhashchange = e => {
 	else if (cleaned.find(e => e.id == hash.slice(1))) openProfile(hash.slice(1))
 }
 
+let resizeTimeout
 window.addEventListener('resize', () => {
 	if (resizeTimeout) clearTimeout(resizeTimeout)
 	resizeTimeout = setTimeout(() => {
 		if (!cleaned) return
-		if (window.location.hash.slice(1) !== '') return
+		// if (window.location.hash.slice(1) !== '') return
+
 		if (isMobileViewport()) {
 			destroyPackery()
 			return
 		}
+
 		if (!pckry) {
 			initPackery()
 			return
 		}
+
 		pckry.reloadItems()
 		pckry.layout()
-	}, 180)
+	}, 350)
 })
 
 window.addEventListener('keydown', (e) => {
