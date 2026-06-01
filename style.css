@@ -107,6 +107,16 @@ p {
 	position: fixed;
 	display: none;
 	overflow-y: scroll;
+	z-index: 10;
+}
+
+body.profile-open .grid-container,
+body.profile-open .tags-container {
+	pointer-events: none;
+}
+
+body.profile-open .grid-container {
+	z-index: 0;
 }
 
 .project-media{

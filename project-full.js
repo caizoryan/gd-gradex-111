@@ -1,15 +1,15 @@
 class ProjectFull {
 	static activeId = null
 
-	constructor({ mediaEl, metadataEl, overlay, tagsContainer, random, video, destroyPackery }) {
+	constructor({ mediaEl, metadataEl, overlay, tagsContainer, random, video, imageStyleUrl, destroyPackery }) {
 		this.mediaEl = mediaEl
 		this.metadataEl = metadataEl
 		this.overlay = overlay
 		this.tagsContainer = tagsContainer
 		this.random = random
 		this.video = video
+		this.imageStyleUrl = imageStyleUrl
 		this.destroyPackery = destroyPackery
-		this.gridAnimationTimeout = null
 
 		overlay.onclick = () => this.resetOverlay()
 	}
@@ -23,28 +23,21 @@ class ProjectFull {
 		return ProjectFull.activeId === id && document.body.classList.contains('profile-open')
 	}
 
-	open(id, projects) {
+	open(id, projects, { skipGridAnimation = false } = {}) {
 		if (this.isOpen(id)) return
 		ProjectFull.activeId = id
 
 		document.body.classList.add('profile-open')
 		this.tagsContainer.innerHTML = ''
+		this.destroyPackery()
 
-		const el = document.querySelector(`*[data-id='${id}']`)
-		document.querySelectorAll('*[data-id]').forEach(e => {
-			if (e != el) e.classList.add('fall-down')
-			e.onanimationend = () => {
-				e.remove()
-				window.scrollTo({ behavior: 'smooth', top: 0, left: 0 })
-				el.classList.add('fall-down')
-				el.onanimationend = () => el.remove()
+		if (skipGridAnimation) {
+			this.clearGrid()
+		} else {
+			this.animateGridAway(id)
+		}
 
-				if (this.gridAnimationTimeout) clearTimeout(this.gridAnimationTimeout)
-				this.gridAnimationTimeout = setTimeout(() => {
-					this.destroyPackery()
-				}, 1500)
-			}
-		})
+		window.scrollTo({ behavior: 'smooth', top: 0, left: 0 })
 
 		this.mediaEl.style.display = 'block'
 		this.metadataEl.style.display = 'block'
@@ -61,10 +54,11 @@ class ProjectFull {
 
 	renderMedia(project) {
 		project.images.forEach(item => {
+			const src = this.imageStyleUrl(item.url, 'large')
 			const img = document.createElement('img')
 			const fullscreen = document.createElement('img')
-			img.src = item.url
-			fullscreen.src = item.url
+			img.src = src
+			fullscreen.src = src
 			img.classList.add('project-img')
 			img.style.opacity = 0
 
@@ -122,11 +116,33 @@ class ProjectFull {
 		}, this.random(5, 15))
 	}
 
+	clearGrid() {
+		const grid = document.querySelector('.grid-container')
+		if (grid) grid.innerHTML = ''
+	}
+
+	animateGridAway(id) {
+		const el = document.querySelector(`*[data-id='${id}']`)
+		if (!el) {
+			this.clearGrid()
+			return
+		}
+
+		document.querySelectorAll('*[data-id]').forEach(e => {
+			if (e != el) e.classList.add('fall-down')
+			e.onanimationend = () => e.remove()
+		})
+
+		el.classList.add('fall-down')
+		el.onanimationend = () => {
+			el.remove()
+			this.clearGrid()
+		}
+	}
+
 	close() {
 		document.body.classList.remove('profile-open')
 		ProjectFull.activeId = null
-
-		if (this.gridAnimationTimeout) clearTimeout(this.gridAnimationTimeout)
 
 		this.mediaEl.style.display = 'none'
 		this.metadataEl.style.display = 'none'

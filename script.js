@@ -180,15 +180,16 @@ fetch(link, {
 		console.log(allTags)
 
 
-		preloadThumbnailImages(cleaned).finally(() => {
-			initHomePage(cleaned)
-			initPackery()
-		})
+		const startHash = window.location.hash.slice(1)
+		const deepLinkProject = startHash && cleaned.find(e => e.id == startHash)
 
-		setTimeout(() => {
-			let startHash = window.location.hash.slice(1)
-			if (startHash != '') checkHash(startHash)
-		}, 850)
+		initHomePage(cleaned)
+
+		if (deepLinkProject) {
+			openProfile(startHash, { skipGridAnimation: true })
+		} else {
+			initPackery()
+		}
 	})
 
 const gridContainer = document.querySelector(".grid-container");
@@ -243,11 +244,12 @@ const projectFull = new ProjectFull({
 	tagsContainer,
 	random,
 	video,
+	imageStyleUrl,
 	destroyPackery
 })
 
-function openProfile(id) {
-	projectFull.open(id, cleaned)
+function openProfile(id, options) {
+	projectFull.open(id, cleaned, options)
 }
 
 function reset() {
@@ -293,24 +295,6 @@ function initHomePage(items) {
 	ProjectTeaser.renderAll(gridContainer, items, { random, imageStyleUrl })
 }
 
-function preloadThumbnailImages(items) {
-	const thumbnailUrls = items
-		.map(item => item.thumbnail?.url ? imageStyleUrl(item.thumbnail.url, 'thumbnail') : null)
-		.filter(Boolean)
-
-	const preloadPromises = thumbnailUrls.map(url => {
-		return new Promise(resolve => {
-			const img = new Image()
-			img.onload = () => resolve()
-			img.onerror = () => resolve()
-			img.src = url.replace("large","thumbnail")
-		})
-	})
-
-	return Promise.allSettled(preloadPromises)
-}
-
-
 function imageStyleUrl(originalUrl, style) {
   const url = new URL(originalUrl, window.location.origin);
   const path = url.pathname.replace('/web/sites/default/files', '');
@@ -336,7 +320,7 @@ window.addEventListener('resize', () => {
 	if (resizeTimeout) clearTimeout(resizeTimeout)
 	resizeTimeout = setTimeout(() => {
 		if (!cleaned) return
-		// if (window.location.hash.slice(1) !== '') return
+		if (document.body.classList.contains('profile-open')) return
 
 		if (isMobileViewport()) {
 			destroyPackery()
